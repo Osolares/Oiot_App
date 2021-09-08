@@ -9,7 +9,7 @@
             rel="noopener"
             class="nav-link"
           >
-            IoTicos.org
+            OIOT
           </a>
         </li>
         <li class="nav-item">

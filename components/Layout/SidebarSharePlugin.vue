@@ -30,6 +30,7 @@
             <span class="label-switch label-right">DARK MODE</span>
           </div>
         </li>
+        <br><br><br>
 
       </ul>
     </div>
