@@ -77,7 +77,7 @@ router.post("/getdevicecredentials", async (req, res) => {
     res.sendStatus(500);
   }
 }); 
- 
+
 //SAVER WEBHOOK
 router.post("/saver-webhook", async (req, res) => {
   try {

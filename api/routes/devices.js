@@ -60,6 +60,7 @@ router.get("/device", checkAuth, async (req, res) => {
       status: "success",
       data: devices
     };
+    //console.log(response);
 
     res.json(response);
   } catch (error) {
@@ -220,6 +221,10 @@ router.put("/saver-rule", checkAuth, async (req, res) => {
 //**********************
 //**** FUNCTIONS *******
 //********************** 
+setTimeout(() => {
+  createSaverRule();
+}, 2000);
+
 
 async function getAlarmRules(userId) {
   try {
@@ -268,7 +273,7 @@ async function getTemplates(userId) {
 async function getSaverRules(userId) {
   try {
     const rules = await SaverRule.find({ userId: userId });
-    return rules;
+    return rules;    
   } catch (error) {
     return false;
   }
@@ -341,6 +346,8 @@ async function updateSaverRuleStatus(emqxRuleId, status) {
     if (res.status === 200 && res.data.data) {
       await SaverRule.updateOne({ emqxRuleId: emqxRuleId }, { status: status });
       console.log("Saver Rule Status Updated...".green);
+
+      console.log(SaverRule);
       return true;
     } else {
       return false;

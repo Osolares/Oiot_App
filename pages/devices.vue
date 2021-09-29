@@ -98,6 +98,10 @@
                 <i
                   class="fas fa-database "
                   :class="{
+
+                    //'text-success': "success",
+                    //'text-dark': "success"
+
                     'text-success': row.saverRule.status,
                     'text-dark': !row.saverRule.status
                   }"
@@ -105,7 +109,12 @@
               </el-tooltip>
 
               <el-tooltip content="Database Saver">
+
+                <!-- @click="updateSaverRuleStatus("success")"
+                  :value="success" -->
+
                 <base-switch
+                  
                   @click="updateSaverRuleStatus(row.saverRule)"
                   :value="row.saverRule.status"
                   type="primary"

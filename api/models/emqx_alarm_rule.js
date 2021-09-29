@@ -18,7 +18,7 @@ const alarmRuleSchema = new Schema({
 
 
 
-const AlarmRule = mongoose.model('alarmRule', alarmRuleSchema);
+const AlarmRule = mongoose.model('AlarmRule', alarmRuleSchema);
 
 
 export default AlarmRule;  

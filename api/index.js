@@ -56,11 +56,17 @@ if (process.env.SSLREDIRECT == "true"){
 
 
 //Mongo Connection
-const mongoUserName = process.env.MONGO_USERNAME;
-const mongoPassword = process.env.MONGO_PASSWORD;
-const mongoHost = process.env.MONGO_HOST;
-const mongoPort = process.env.MONGO_PORT;
-const mongoDatabase = process.env.MONGO_DATABASE;
+ const mongoPassword = process.env.MONGO_PASSWORD;
+ const mongoDatabase = process.env.MONGO_DATABASE;
+ const mongoHost = process.env.MONGO_HOST;
+ const mongoPort = process.env.MONGO_PORT;
+ const mongoUserName = process.env.MONGO_USERNAME;
+
+// const mongoUserName = "devuser";
+// const mongoPassword = "devpassword";
+// const mongoHost = "localhost";
+// const mongoPort = "27017";
+// const mongoDatabase = "iotgl";
 
 var uri =
   "mongodb://" +
