@@ -30,6 +30,12 @@
         v-if="widget.widget == 'indicator'"
         :config="fixWidget(widget)"
       ></Iotindicator>
+
+      <IotMap
+        v-if="widget.widget == 'map'"
+        :config="fixWidget(widget)"
+      ></IotMap>
+
     </div>
   </div>
 

@@ -11,6 +11,7 @@
           <!-- WIDGET SELECTOR AND FORMS -->
           <div class="col-6">
             <!-- WIDGETS SELECTOR -->
+             
             <el-select
               v-model="widgetType"
               class="select-success"
@@ -418,14 +419,14 @@
 
               <base-input
                 v-model="iotIndicatorConfig.variableFullName"
-                label="Var Name"
+                label="Nombre"
                 type="text"
               >
               </base-input>
 
               <base-input
                 v-model="iotIndicatorConfig.icon"
-                label="Icon"
+                label="Icono"
                 type="text"
               ></base-input>
 
@@ -433,7 +434,7 @@
 
               <base-input
                 v-model="iotIndicatorConfig.variableSendFreq"
-                label="Send Freq"
+                label="Frecuencia de Envío"
                 type="text"
               ></base-input>
 
@@ -475,6 +476,11 @@
                 placeholder="Select Column Width"
                 style="width: 100%;"
               >
+                <el-option
+                  class="text-dark"
+                  value="col-2"
+                  label="col-2"
+                ></el-option>
                 <el-option
                   class="text-dark"
                   value="col-3"
@@ -529,6 +535,130 @@
 
               <br /><br />
             </div>
+
+            <!-- FORM MAP TYPE -->
+            <div v-if="widgetType == 'map'">
+
+              <base-input
+                v-model="iotMapConfig.variableFullName"
+                label="Nombre"
+                type="text"
+              >
+              </base-input>
+
+              <base-input
+                v-model="iotMapConfig.icon"
+                label="Icono"
+                type="text"
+              ></base-input>
+
+              <br />
+
+              <base-input
+                v-model="iotMapConfig.variableSendFreq"
+                label="Frecuencia de Envío"
+                type="text"
+              ></base-input>
+
+              <br />
+              
+
+              <el-select
+                v-model="iotMapConfig.class"
+                class="select-success"
+                placeholder="Select Class"
+                style="width: 100%;"
+              >
+                <el-option
+                  class="text-success"
+                  value="success"
+                  label="Success"
+                ></el-option>
+                <el-option
+                  class="text-primary"
+                  value="primary"
+                  label="Primary"
+                ></el-option>
+                <el-option
+                  class="text-warning"
+                  value="warning"
+                  label="Warning"
+                ></el-option>
+                <el-option
+                  class="text-danger"
+                  value="danger"
+                  label="Danger"
+                ></el-option>
+              </el-select>
+
+              <br /><br /><br />
+
+              <el-select
+                v-model="iotMapConfig.column"
+                class="select-success"
+                placeholder="Select Column Width"
+                style="width: 100%;"
+              >
+                <el-option
+                  class="text-dark"
+                  value="col-2"
+                  label="col-2"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-3"
+                  label="col-3"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-4"
+                  label="col-4"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-5"
+                  label="col-5"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-6"
+                  label="col-6"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-7"
+                  label="col-7"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-8"
+                  label="col-8"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-9"
+                  label="col-9"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-10"
+                  label="col-10"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-11"
+                  label="col-11"
+                ></el-option>
+                <el-option
+                  class="text-dark"
+                  value="col-12"
+                  label="col-12"
+                ></el-option>
+              </el-select>
+
+              <br /><br />
+            </div>
+
           </div>
 
           <!-- WIDGET PREVIEW -->
@@ -549,6 +679,11 @@
               v-if="widgetType == 'indicator'"
               :config="iotIndicatorConfig"
             ></Iotindicator>
+            <IotMap
+              v-if="widgetType == 'map'"
+              :config="iotMapConfig"
+            ></IotMap>
+
           </div>
         </div>
 
@@ -602,6 +737,12 @@
           v-if="widget.widget == 'indicator'"
           :config="widget"
         ></Iotindicator>
+
+        <IotMap
+          v-if="widget.widget == 'map'"
+          :config="widget"
+        ></IotMap>
+
       </div>
     </div>
 
@@ -800,6 +941,22 @@ export default {
         message: "{'fanstatus': 'stop'}"
       },
 
+      iotMapConfig: {
+        userId: "userid",
+        selectedDevice: {
+          name: "Home",
+          dId: "8888"
+        },
+        variableFullName: "Mapa",
+        variable: "varname",
+        variableType: "input",
+        variableSendFreq: "30",
+        class: "success",
+        widget: "map",
+        icon: "fas fa-map",
+        column: "col-6"
+      },
+
 
     };
   },
@@ -949,6 +1106,11 @@ export default {
       if (this.widgetType == "indicator") {
         this.iotIndicatorConfig.variable = this.makeid(10);
         this.widgets.push(JSON.parse(JSON.stringify(this.iotIndicatorConfig)));
+      }
+
+      if (this.widgetType == "map") {
+        this.iotMapConfig.variable = this.makeid(10);
+        this.widgets.push(JSON.parse(JSON.stringify(this.iotMapConfig)));
       }
 
     },
