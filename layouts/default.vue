@@ -44,7 +44,7 @@
         >
         </sidebar-item>
 
-                <sidebar-item
+        <sidebar-item
           :link="{
             name: 'Mapas',
             icon: 'tim-icons icon-map-big',
@@ -79,6 +79,10 @@
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import SidebarShare from "@/components/Layout/SidebarSharePlugin";
+
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css'
+
 function hasElement(className) {
   return document.getElementsByClassName(className).length > 0;
 }
@@ -283,7 +287,7 @@ export default {
       this.client.on("disconnect", error => {
         console.log("MQTT disconnect EVENT FIRED:", error);
       });
-
+ 
       this.client.on("message", (topic, message) => {
         console.log("Message from topic " + topic + " -> ");
         console.log(message.toString());
@@ -293,6 +297,18 @@ export default {
           const msgType = splittedTopic[3];
 
           if (msgType == "notif") {
+
+              // Reproducir alerta de sonido
+              const audio = new Audio('/alert_error.mp3'); // Asegúrate de colocar el archivo en static/
+              audio.play();
+              // Mostrar alerta de error
+              Swal.fire({
+              icon: 'error',
+              title: 'Error',
+                text:  message.toString(),
+            });
+
+
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-alert-circle-exc",

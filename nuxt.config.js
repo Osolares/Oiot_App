@@ -4,7 +4,7 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: 'IoT GL',
+    title: 'OIoT',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -40,6 +40,8 @@ export default {
   plugins: [
     `~/plugins/dashboard-plugin.js`,
     `~/plugins/vue2-google-maps.js`,
+    '~/plugins/element-ui.js'
+
 
   ],
   //autoimport

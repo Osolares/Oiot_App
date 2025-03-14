@@ -5,9 +5,10 @@ const Schema = mongoose.Schema;
 const templateSchema = new Schema({
     userId: { type: String, required: [true] },
     name: { type: String, required: [true] },
-    description: {type: String},
+    description: { type: String },
     createdTime: { type: Number, required: [true] },
-    widgets: {type: Array, default: []}
+    updatedTime: { type: Number },
+    widgets: { type: Array, default: [] }
 });
 
 

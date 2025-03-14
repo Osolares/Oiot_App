@@ -17,7 +17,6 @@
           <span class="navbar-toggler-bar navbar-kebab"></span>
         </button>
       </slot>
-
       <CollapseTransition
         @after-leave="onTransitionEnd"
         @before-enter="onTransitionStart"
@@ -26,11 +25,13 @@
           class="collapse navbar-collapse show"
           :class="menuClasses"
           v-show="show"
-        >
+        > 
+
           <slot></slot>
         </div>
       </CollapseTransition>
     </div>
+    
   </nav>
 </template>
 <script>

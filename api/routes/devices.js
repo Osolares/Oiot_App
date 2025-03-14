@@ -215,6 +215,40 @@ router.put("/saver-rule", checkAuth, async (req, res) => {
   }
 });
 
+router.put("/updatedevice", checkAuth, async (req, res) => {
+  try {
+    const userId = req.userData._id;
+    const { newDevice } = req.body;
+
+    if (!newDevice || !newDevice.dId) {
+      return res.status(400).json({ status: "error", message: "Device ID is required" });
+    }
+
+    // Buscar el dispositivo a actualizar
+    const device = await Device.findOne({ userId, dId: newDevice.dId });
+
+    if (!device) {
+      return res.status(404).json({ status: "error", message: "Device not found" });
+    }
+
+    // Actualizar los campos necesarios
+    device.name = newDevice.name || device.name;
+    device.dId = newDevice.dId || device.dId;
+    device.password = newDevice.password || device.password;
+    device.templateId = newDevice.templateId || device.templateId;
+    device.templateName = newDevice.templateName || device.templateName;
+    device.updatedTime = Date.now();
+
+    await device.save();
+
+    return res.json({ status: "success", message: "Device updated successfully" });
+  } catch (error) {
+    console.error("ERROR UPDATING DEVICE", error);
+    return res.status(500).json({ status: "error", error: error.message });
+  }
+});
+
+
 
 
 //**********************
@@ -277,9 +311,9 @@ async function getSaverRules(userId) {
 //create saver rule
 async function createSaverRule(userId, dId, status) {
 
- 
+
   try {
-    const url = "http://"+process.env.EMQX_API_HOST+":8085/api/v4/rules";
+    const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules";
 
     const topic = userId + "/" + dId + "/+/sdata";
 
@@ -330,7 +364,7 @@ async function createSaverRule(userId, dId, status) {
 //update saver rule
 async function updateSaverRuleStatus(emqxRuleId, status) {
   try {
-    const url = "http://"+process.env.EMQX_API_HOST+":8085/api/v4/rules/" + emqxRuleId;
+    const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules/" + emqxRuleId;
 
     const newRule = {
       enabled: status
@@ -355,7 +389,7 @@ async function deleteSaverRule(dId) {
   try {
     const mongoRule = await SaverRule.findOne({ dId: dId });
 
-    const url = "http://"+process.env.EMQX_API_HOST+":8085/api/v4/rules/" + mongoRule.emqxRuleId;
+    const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules/" + mongoRule.emqxRuleId;
 
     const emqxRule = await axios.delete(url, auth);
 
@@ -376,7 +410,7 @@ async function deleteAllAlarmRules(userId, dId) {
 
     if (rules.length > 0) {
       asyncForEach(rules, async rule => {
-        const url = "http://"+process.env.EMQX_API_HOST+":8085/api/v4/rules/" + rule.emqxRuleId;
+        const url = "http://" + process.env.EMQX_API_HOST + ":8085/api/v4/rules/" + rule.emqxRuleId;
         const res = await axios.delete(url, auth);
       });
 

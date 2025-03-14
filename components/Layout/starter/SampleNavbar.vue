@@ -33,6 +33,7 @@
         >
           <i class="tim-icons icon-zoom-split"></i>
         </button>
+        
         <!-- You can choose types of search input -->
       </div>
       <modal
@@ -67,14 +68,14 @@
           <p class="d-lg-none">Log out</p>
         </template>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Profile</a>
+          <a href="#" class="nav-item dropdown-item">Perfil</a>
         </li>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Settings</a>
+          <a href="#" class="nav-item dropdown-item">Configuración</a>
         </li>
         <div class="dropdown-divider"></div>
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Log out</a>
+          <a href="#" class="nav-item dropdown-item">Salir</a>
         </li>
       </base-dropdown>
     </ul>

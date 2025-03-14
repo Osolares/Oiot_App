@@ -1,45 +1,123 @@
 <template>
   <div class="card-container">
 
-    <card class="card">
-      <div slot="header">
-        <h4 class="card-title">
-          {{ config.selectedDevice.name }} - {{ config.variableFullName }}
-        </h4>
-      </div>
+  <card  class="card">
+    <div slot="header">
+      <h4 class="card-title">
+        {{ config.selectedDevice.name }} - {{ config.variableFullName }}
+      </h4>
+    </div>
 
-      <p>Mensaje a Enviar:
-      <h5>{{ config.message }} </h5>
-      </p>
+    <p>Mensaje a Enviar: <h5>{{config.message}} </h5></p>
 
-      <!-- Contenedor para mostrar la cuenta regresiva -->
-      <p v-if="countdown > 0">Tiempo restante: <strong>{{ formattedCountdown }}</strong></p>
+    <!-- Contenedor para mostrar la cuenta regresiva -->
+    <p v-if="countdown > 0">Tiempo restante: <strong>{{ formattedCountdown }}</strong></p>
 
 
-      <!-- Contenedor flexible para el icono y el select -->
-      <div class="icon-select-container">
-        <i class="fa" :class="[config.icon, getIconColorClass()]" style="font-size: 30px; margin-right: 10px;"></i>
+    <!-- Contenedor flexible para el icono y el select -->
+    <div class="icon-select-container">
+      <i
+        class="fa"
+        :class="[config.icon, getIconColorClass()]"
+        style="font-size: 30px; margin-right: 10px;"
+      ></i>
 
-        <el-select v-model="selectedNumber" :class="[getSelectColorClass()]"
-          placeholder="Selecciona o ingresa un número" :disabled="isSelectDisabled" filterable allow-create @change="">
+      <template>
+  <div>
+    <h1>🌿 Sistema de Riego</h1>
 
-          <el-option :class="[getSelectColorClass()]" :value=0.10 :label="'6 Segundos'"></el-option>
+    <el-form>
+      <el-form-item label="Días de riego">
+        <el-checkbox-group v-model="diasRiego">
+          <el-checkbox label="Lunes"></el-checkbox>
+          <el-checkbox label="Martes"></el-checkbox>
+          <el-checkbox label="Miércoles"></el-checkbox>
+          <el-checkbox label="Jueves"></el-checkbox>
+          <el-checkbox label="Viernes"></el-checkbox>
+          <el-checkbox label="Sábado"></el-checkbox>
+          <el-checkbox label="Domingo"></el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
 
-          <el-option :class="[getSelectColorClass()]" :value=0.25 :label="'15 Segundos'"></el-option>
+      <el-form-item label="Hora de Inicio">
+        <el-time-picker v-model="horaInicio" format="HH:mm"></el-time-picker>
+      </el-form-item>
 
-          <el-option :class="[getSelectColorClass()]" :value=0.50 :label="'30 Segundos'"></el-option>
+      <el-form-item label="Duración (min)">
+        <el-input-number v-model="duracion" :min="1" :max="60"></el-input-number>
+      </el-form-item>
 
-          <el-option :class="[getSelectColorClass()]" :value=0.75 :label="'45 Segundos'"></el-option>
+      <el-button type="primary" @click="guardarConfiguracion">Guardar Configuración</el-button>
+    </el-form>
 
-          <el-option v-for="option in numbers" :class="[getSelectColorClass()]" :value="option.value"
-            :label="option.label + ' Minutos'" :key="option.label"></el-option>
-        </el-select>
-      </div>
+    <h2>Estado del Riego: {{ estadoRiego }}</h2>
+    <el-button type="success" @click="activarRiego">Activar Riego</el-button>
+    <el-button type="danger" @click="desactivarRiego">Desactivar Riego</el-button>
+  </div>
+</template>
 
-      <base-button @click="sendValue()" :type="config.class" class="mb-3 pull-right" size="lg">
-        {{ config.text }}
-      </base-button>
-    </card>
+
+
+
+      <el-select
+        v-model="selectedNumber"
+        :class="[getSelectColorClass()]"
+        placeholder="Selecciona o ingresa un número"
+        :disabled="isSelectDisabled"
+        filterable
+        allow-create
+        @change=""
+      >
+
+        <el-option
+        :class="[ getSelectColorClass()]"
+          :value=0.05
+          :label="0.05"
+        ></el-option>
+
+        <el-option
+        :class="[ getSelectColorClass()]"
+          :value=0.10
+          :label="0.10"
+        ></el-option>
+
+        <el-option
+        :class="[ getSelectColorClass()]"
+          :value=0.15
+          :label="0.15"
+        ></el-option>
+
+        <el-option
+        :class="[ getSelectColorClass()]"
+          :value=0.30
+          :label="0.30"
+        ></el-option>
+
+        <el-option
+        :class="[ getSelectColorClass()]"
+          :value=0.45
+          :label="0.45"
+        ></el-option>
+
+        <el-option
+          v-for="option in numbers"
+        :class="[ getSelectColorClass()]"
+          :value="option.value"
+          :label="option.label"
+          :key="option.label"
+        ></el-option>
+      </el-select>
+    </div>
+
+    <base-button
+      @click="sendValue()"
+      :type="config.class"
+      class="mb-3 pull-right"
+      size="lg"
+    >
+      {{ config.text }}
+    </base-button>
+  </card>
   </div>
 </template>
 
@@ -111,15 +189,15 @@ export default {
     };
   },
 
-  computed: {
+    computed: {
     formattedCountdown() {
       if (this.countdown < 60) {
         return `${this.countdown} segundos`;
       }
       const minutes = Math.floor(this.countdown / 60);
       const seconds = this.countdown % 60;
-      return seconds > 0
-        ? `${minutes} minutos y ${seconds} segundos`
+      return seconds > 0 
+        ? `${minutes} minutos y ${seconds} segundos` 
         : `${minutes} minutos`;
     }
   },
@@ -156,12 +234,12 @@ export default {
 
       if (!isNaN(this.selectedNumber) && Number(this.selectedNumber) > 0) {
 
-        this.startCountdown();
+          this.startCountdown();
       } else {
-        setTimeout(() => {
-          this.sending = false;
-        }, 500);
-      }
+      setTimeout(() => {
+        this.sending = false;
+      }, 500);
+        }
     },
 
     startCountdown() {
@@ -228,16 +306,13 @@ export default {
 /* Estilos para el contenedor flexible */
 .icon-select-container {
   display: flex;
-  align-items: center;
-  /* Alinea verticalmente los elementos */
-  margin-bottom: 20px;
-  /* Espacio inferior */
+  align-items: center; /* Alinea verticalmente los elementos */
+  margin-bottom: 20px; /* Espacio inferior */
 }
 
 /* Estilos para el select */
 .select-danger {
-  flex-grow: 1;
-  /* Ocupa el espacio restante */
+  flex-grow: 1; /* Ocupa el espacio restante */
 }
 
 .card {
@@ -248,7 +323,34 @@ export default {
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  /* Espaciado entre tarjetas */
+  gap: 20px; /* Espaciado entre tarjetas */
 }
 </style>
+
+<script>
+import mqtt from "mqtt";
+
+export default {
+  data() {
+    return {
+      diasRiego: [],
+      horaInicio: "",
+      duracion: 10,
+      estadoRiego: "Desactivado",
+      mqttClient: null,
+    };
+  },
+
+  methods: {
+    guardarConfiguracion() {
+      console.log("Configuración Guardada:", this.diasRiego, this.horaInicio, this.duracion);
+    },
+    activarRiego() {
+      this.mqttClient.publish("riego/control", "ON");
+    },
+    desactivarRiego() {
+      this.mqttClient.publish("riego/control", "OFF");
+    },
+  },
+};
+</script>
