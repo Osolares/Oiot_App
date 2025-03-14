@@ -4,7 +4,9 @@
     <div class="row">
       <card>
         <div slot="header">
-          <h4 class="card-title">Add new Device</h4>
+          <h4 v-if="deviceEdition" class="card-title">ACTUALIZAR DISPOSITIVO</h4>
+          <h4 v-else class="card-title">CREAR NUEVO DISPOSITIVO</h4>
+
         </div>
 
         <div class="row">
@@ -27,6 +29,17 @@
             >
             </base-input>
           </div>
+          <div class="col-4" v-if="deviceEdition">
+            <base-input
+              label="Password"
+              type="text"
+              placeholder="Ex: 7777-8888"
+              v-model="newDevice.password"
+            >
+            </base-input>
+          </div>
+
+
 
           <div class="col-4">
             <slot name="label">
@@ -50,14 +63,26 @@
           </div>
         </div>
 
-        <div class="row pull-right">
+        <div v-if="deviceEdition" class="row pull-right">
+          <div class="col-12">
+            <base-button
+              @click="updateDevice(newDevice)"
+              type="success"
+              class="mb-3"
+              size="lg"
+              >Actualizar Dispositivo</base-button
+            >
+          </div>
+        </div>
+
+        <div v-else class="row pull-right">
           <div class="col-12">
             <base-button
               @click="createNewDevice()"
               type="primary"
               class="mb-3"
               size="lg"
-              >Add</base-button
+              >Crear</base-button
             >
           </div>
         </div>
@@ -91,6 +116,13 @@
 
           <el-table-column label="Actions">
             <div slot-scope="{ row, $index }">
+
+              <el-tooltip content="Edit" effect="light" :open-delay="300" placement="top">
+                <base-button @click="editDevice(row)" type="success" icon size="sm">
+                  <i class="fa fa-edit"></i>
+                </base-button>
+              </el-tooltip>
+
               <el-tooltip
                 content="Saver Status Indicator"
                 style="margin-right:10px"
@@ -141,6 +173,8 @@
 <script>
 import { Table, TableColumn } from "element-ui";
 import { Select, Option } from "element-ui";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css'
 
 export default {
   middleware: "authenticated",
@@ -152,6 +186,8 @@ export default {
   },
   data() {
     return {
+      selectedDevice: {},
+      deviceEdition : false,
       templates: [],
       selectedIndexTemplate: null,
       newDevice: {
@@ -159,9 +195,47 @@ export default {
         dId: "",
         templateId: "",
         templateName: ""
-      }
+      },
+      devicePassword : ""
     };
   },
+
+  watch: {
+
+    selectedDevice: {
+      handler(newVal) {
+        if (newVal) {
+      const templateIndex = this.templates.findIndex(
+        (template) => template._id === newVal.templateId
+      );
+
+      if (templateIndex !== -1) {
+        // Actualizar el índice seleccionado
+        this.selectedIndexTemplate = templateIndex;
+      } 
+
+
+
+          this.newDevice.name = newVal.name
+          this.newDevice.dId = newVal.dId
+          this.newDevice.templateId = newVal.templateId
+          //this.selectedIndexTemplate = 0
+          this.newDevice.password = newVal.password
+
+          console.log("Device actualizado:", this.selectedDevice);
+
+          
+        }
+      },
+      deep: true,
+      immediate: true, // Para que se ejecute al montar el componente
+
+    },
+    
+  },
+
+
+
   mounted() {
     
     this.getTemplates();
@@ -192,6 +266,13 @@ export default {
 
             this.$store.dispatch("getDevices");
 
+                        // Mostrar alerta de éxito
+             Swal.fire({
+              icon: 'success',
+              title: 'EXITO',
+              text: 'Saver Rule actualizada correctamente.',
+            });
+
             this.$notify({
               type: "success",
               icon: "tim-icons icon-check-2",
@@ -204,6 +285,13 @@ export default {
         })
         .catch(e => {
           console.log(e);
+      // Mostrar alerta de error
+       Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Ocurrió un error al actualizar el estado de la Saver Rule.',
+      });
+
           this.$notify({
             type: "danger",
             icon: "tim-icons icon-alert-circle-exc",
@@ -227,6 +315,13 @@ export default {
         .delete("/device", axiosHeaders)
         .then(res => {
           if (res.data.status == "success") {
+                        // Mostrar alerta de éxito
+            Swal.fire({
+              icon: 'success',
+              title: 'EXITO',
+              text: 'El dispositivo se ha eliminado correctamente.',
+            });
+
             this.$notify({
               type: "success",
               icon: "tim-icons icon-check-2",
@@ -240,6 +335,13 @@ export default {
         })
         .catch(e => {
           console.log(e);
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error eliminando el dispositivo ' + device.name,
+            });
+          
           this.$notify({
             type: "danger",
             icon: "tim-icons icon-alert-circle-exc",
@@ -251,6 +353,7 @@ export default {
     //new device
     createNewDevice() {
       if (this.newDevice.name == "") {
+
         this.$notify({
           type: "warning",
           icon: "tim-icons icon-alert-circle-exc",
@@ -304,6 +407,12 @@ export default {
             this.newDevice.name = "";
             this.newDevice.dId = "";
             this.selectedIndexTemplate = null;
+                                    // Mostrar alerta de éxito
+            Swal.fire({
+              icon: 'success',
+              title: 'EXITO',
+              text: 'El dispositivo se ha agregado correctamente.',
+            });
 
             this.$notify({
               type: "success",
@@ -319,6 +428,13 @@ export default {
             e.response.data.status == "error" &&
             e.response.data.error.errors.dId.kind == "unique"
           ) {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'El dispositivo ya esta registrado en el sistema. Intente con otros datos',
+            });
+
             this.$notify({
               type: "warning",
               icon: "tim-icons icon-alert-circle-exc",
@@ -327,6 +443,12 @@ export default {
             });
             return;
           } else {
+              // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error desconocido',
+            });
             this.showNotify("danger", "Error");
             return;
           }
@@ -349,6 +471,14 @@ export default {
           this.templates = res.data.data;
         }
       } catch (error) {
+
+                    // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error obteniendo plantillas',
+             });
+            
         this.$notify({
           type: "danger",
           icon: "tim-icons icon-alert-circle-exc",
@@ -373,6 +503,14 @@ export default {
         .delete("/device", axiosHeader)
         .then(res => {
           if (res.data.status == "success") {
+
+                                    // Mostrar alerta de éxito
+            Swal.fire({
+              icon: 'success',
+              title: 'EXITO',
+              text: 'El dispositivo se ha eliminado correctamente.' + device.name,
+            });
+
             this.$notify({
               type: "success",
               icon: "tim-icons icon-check-2",
@@ -383,6 +521,14 @@ export default {
         })
         .catch(e => {
           console.log(e);
+
+                      // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error eliminando ' + device.name,
+             });
+            
           this.$notify({
             type: "danger",
             icon: "tim-icons icon-alert-circle-exc",
@@ -390,6 +536,102 @@ export default {
           });
         });
     },
+
+        // Editar widget - Carga datos en selectedTemplate y selectedWidget, activa edición
+    editDevice(device) {
+      this.selectedDevice = { ...device }; // Clonamos el objeto
+      this.deviceEdition = true;
+         //Hacer scroll al inicio de la página
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+    },
+
+          //Update Template
+async updateDevice() {
+  if (!this.newDevice.name || !this.newDevice.dId || !this.newDevice.password) {
+    this.$notify({
+      type: "warning",
+      icon: "tim-icons icon-alert-circle-exc",
+      message: "All fields are required!"
+    });
+    return;
+  }
+
+  if (this.selectedIndexTemplate == null) {
+    this.$notify({
+      type: "warning",
+      icon: "tim-icons icon-alert-circle-exc",
+      message: "Template must be selected"
+    });
+    return;
+  }
+
+  const axiosHeaders = {
+    headers: { token: this.$store.state.auth.token }
+  };
+
+  // Asignar template seleccionado
+  this.newDevice.templateId = this.templates[this.selectedIndexTemplate]._id;
+  this.newDevice.templateName = this.templates[this.selectedIndexTemplate].name;
+
+  const toSend = { newDevice: this.newDevice };
+
+  try {
+    const res = await this.$axios.put("/updatedevice", toSend, axiosHeaders);
+    
+    if (res.data.status === "success") {
+      this.$store.dispatch("getDevices");
+
+      // Reiniciar formulario
+      this.newDevice = { name: "", dId: "", password: "" };
+      this.selectedIndexTemplate = null;
+      this.selectedDevice = {};
+      this.deviceEdition = false;
+            // Mostrar alerta de éxito
+      await Swal.fire({
+        icon: 'success',
+        title: 'Dispositivo',
+        text: 'El dispositivo se ha actualizado correctamente.',
+      });
+      this.$notify({
+        type: "success",
+        icon: "tim-icons icon-check-2",
+        message: "Success! Device was updated"
+      });
+    }
+  } catch (e) {
+    if (e.response && e.response.data.status === "error") {
+      // Mostrar alerta de error
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Ocurrió un error al actualizar el dispositivo.',
+      });
+
+      this.$notify({
+        type: "warning",
+        icon: "tim-icons icon-alert-circle-exc",
+        message: e.response.data.message || "Error updating device"
+      });
+    } else {
+      // Mostrar alerta de error
+      await Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text:  'Ocurrió un error desconocido al actualizar el widget.',
+      });
+      this.$notify({
+        type: "danger",
+        icon: "tim-icons icon-alert-circle-exc",
+        message: "An unexpected error occurred"
+      });
+    }
+  }
+}
+
 
   }
 };

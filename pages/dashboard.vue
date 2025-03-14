@@ -10,7 +10,6 @@
       :class="[widget.column]"
       
     >
-
       <Rtnumberchart
         v-if="widget.widget == 'numberchart'"
         :config="fixWidget(widget)"
@@ -36,11 +35,16 @@
         :config="fixWidget(widget)"
       ></IotMap>
 
+      <IotSendNumber
+        v-if="widget.widget == 'sendNumber'"
+        :config="fixWidget(widget)"
+      ></IotSendNumber>
+
     </div>
   </div>
 
   <div v-else>
-    Select a Device...
+    Selecciona un Dispositivo...
   </div>
 
 </template>

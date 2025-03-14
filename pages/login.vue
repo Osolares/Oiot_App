@@ -4,7 +4,7 @@
       <card class="card-login card-white">
         <template slot="header">
           <img src="img//card-primary.png" alt="" />
-          <h1 class="card-title">IoT GL   </h1>
+          <h1 class="card-title">OIoT </h1>
         </template>
 
         <div>
@@ -40,13 +40,13 @@
           <div class="pull-left">
             <h6>
               <nuxt-link class="link footer-link" to="/register">
-                Create Account
+                Crear Cuenta
               </nuxt-link>
             </h6>
           </div>
 
           <div class="pull-right">
-            <h6><a href="#help!!!" class="link footer-link">Need Help?</a></h6>
+            <h6><a href="#help!!!" class="link footer-link">Necesitas Ayuda?</a></h6>
           </div>
         </div>
       </card>
@@ -55,6 +55,9 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css'
+
 const Cookie = process.client ? require("js-cookie") : undefined;
 export default {
   middleware: 'notAuthenticated',
@@ -102,12 +105,44 @@ export default {
             $nuxt.$router.push('/dashboard');
 
             return;
+          } 
+          else {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error no ha sido posible ingresar, intente nuevamente ' ,
+            });
           }
         })
         .catch(e => {
           console.log(e.response.data);
 
+          if (e.response.data.error == "Invalid Credentials") {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Credenciales Inválidas, intente nuevamente',
+            });
+
+            this.$notify({
+              type: "danger",
+              icon: "tim-icons icon-alert-circle-exc",
+              message: "Credenciales Inválidas, intente nuevamente"
+            });
+
+            return;
+          }
+
           if (e.response.data.error.errors.email.kind == "unique") {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'El usuario ya existe',
+            });
+
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-alert-circle-exc",
@@ -116,6 +151,13 @@ export default {
 
             return;
           } else {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error creando usuario intente nuevamente',
+            });
+
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-alert-circle-exc",

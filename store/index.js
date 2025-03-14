@@ -47,29 +47,29 @@ export const actions = {
     };
 
     this.$axios.get("/device", axiosHeader)
-    .then(res => {
-      console.log(res.data.data);
+      .then(res => {
+        console.log(res.data.data);
 
-      res.data.data.forEach((device, index) => {
-        if (device.selected){
-          this.commit("setSelectedDevice", device);
-          $nuxt.$emit('selectedDeviceIndex', index);
+        res.data.data.forEach((device, index) => {
+          if (device.selected) {
+            this.commit("setSelectedDevice", device);
+            $nuxt.$emit('selectedDeviceIndex', index);
+          }
+        });
+
+        //if all devices were removed
+        if (res.data.data.length == 0) {
+          this.commit("setSelectedDevice", {});
+          $nuxt.$emit('selectedDeviceIndex', null);
         }
+
+        this.commit("setDevices", res.data.data);
+
+
+      }).catch(error => {
+        console.log(error);
       });
 
-      //if all devices were removed
-      if (res.data.data.length == 0){
-        this.commit("setSelectedDevice", {});
-        $nuxt.$emit('selectedDeviceIndex', null);
-      }
-
-      this.commit("setDevices", res.data.data);
-
-
-    }).catch(error => {
-      console.log(error);
-    });
-    
   },
 
   getNotifications() {
@@ -81,12 +81,12 @@ export const actions = {
     };
 
     this.$axios.get("/notifications", axiosHeader)
-    .then(res => {
-      console.log(res.data.data);
-      this.commit("setNotifications", res.data.data)
-    }).catch(error => {
-      console.log(error);
-    });
-    
+      .then(res => {
+        console.log(res.data.data);
+        this.commit("setNotifications", res.data.data)
+      }).catch(error => {
+        console.log(error);
+      });
+
   }
 };

@@ -4,7 +4,7 @@
       <card class="card-login card-white">
         <template slot="header">
           <img src="img//card-primary.png" alt="" />
-          <h1 class="card-title">IoT GL</h1>
+          <h1 class="card-title">OIoT</h1>
         </template>
 
         <div>
@@ -49,13 +49,13 @@
           <div class="pull-left">
             <h6>
               <nuxt-link class="link footer-link" to="/login">
-                login
+                Login
               </nuxt-link>
             </h6>
           </div>
 
           <div class="pull-right">
-            <h6><a href="#help!!!" class="link footer-link">Need Help?</a></h6>
+            <h6><a href="#help!!!" class="link footer-link">Necesitas Ayuda?</a></h6>
           </div>
         </div>
       </card>
@@ -63,6 +63,9 @@
   </div>
 </template>
 <script>
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.css'
+
 export default {
   middleware: 'notAuthenticated',
   layout: "auth",
@@ -83,6 +86,33 @@ export default {
         .then(res => {
           //success! - Usuario creado.
           if (res.data.status == "success") {
+
+
+    // Mostrar mensaje de confirmación con SweetAlert2
+    const result = Swal.fire({
+      title: 'EXITO',
+      text: "El usuario a sido creado exitosamente ¿Desea Ingresar al Dashboard?",
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No'
+    });
+
+    // Si el usuario confirma la eliminación
+    if (result.isConfirmed) {
+      window.location.href = '/login'; // Redirige a la página de login
+
+
+    } else {
+
+
+    }
+
+            
+
+
             this.$notify({
               type: "success",
               icon: "tim-icons icon-check-2",
@@ -101,6 +131,13 @@ export default {
           console.log(e.response.data);
 
           if (e.response.data.error.errors.email.kind == "unique") {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error el usuario ya existe, intente con otros datos',
+            });
+            
             this.$notify({
               type: "danger",
               icon: "tim-icons icon-alert-circle-exc",
@@ -110,6 +147,12 @@ export default {
             return;
 
           } else {
+            // Mostrar alerta de error
+             Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error creando usuario, intente nuevamente ',
+            });
 
             this.$notify({
               type: "danger",
